@@ -1,0 +1,100 @@
+esphome:
+  name: SenseMate32-1fcaac
+  friendly_name: SenseMate32-1fcaac
+  min_version: 2025.5.0
+  compile_process_limit: 1
+  name_add_mac_suffix: false
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+- platform: esphome
+
+wifi:
+  ssid: "" # Enter your WiFi SSID
+  password: "" # Enter your WiFi Password
+
+
+# UART required to talk to LD2420 Presence sensor    
+uart:
+  tx_pin: GPIO19
+  rx_pin: GPIO18
+  baud_rate: 115200
+  parity: NONE
+  stop_bits: 1
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+
+
+
+# Example configuration entry
+ld2420:
+
+text_sensor:
+  - platform: ld2420
+    fw_version:
+      name: LD2420 Firmware
+
+sensor:
+  - platform: ld2420
+    moving_distance:
+      name : Moving Distance
+
+   # --- AHT20 Temperature & Humidity ---
+  - platform: aht10
+    variant: AHT20
+    temperature:
+      name: "AHT20 Temperature"
+    humidity:
+      name: "AHT20 Humidity"
+    update_interval: 20s
+
+binary_sensor:
+  - platform: ld2420
+    has_target:
+      name: Presence
+
+select:
+  - platform: ld2420
+    operating_mode:
+      name: Operating Mode
+
+number:
+  - platform: ld2420
+    presence_timeout:
+      name: Detection Presence Timeout
+    min_gate_distance:
+      name: Detection Gate Minimum
+    max_gate_distance:
+      name: Detection Gate Maximum
+    # See "Number" section below for detail
+    gate_select:
+      name: Select Gate to Set
+    still_threshold:
+      name: Set Still Threshold Value
+    move_threshold:
+      name: Set Move Threshold Value
+
+button:
+  - platform: ld2420
+    apply_config:
+      name: Apply Config
+    factory_reset:
+      name: Factory Reset
+    restart_module:
+      name: Restart Module
+    revert_config:
+      name: Undo Edits
